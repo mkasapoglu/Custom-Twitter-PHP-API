@@ -4,7 +4,7 @@
 	 * Custom Twitter API
 	 *
 	 * @author	Robin Bonnes <http://robinbonnes.nl/>
-	 * @version	1.0
+	 * @version	1.1
 	 *
 	 * Copyright (C) 2013 Robin Bonnes. All rights reserved.
 	 * 
@@ -31,6 +31,7 @@
 	 * CHANGELOG:
 	 *
 	 * v1.0	- Release
+	 * v1.1 - Search function added
 	 *
 	 * Note: PHP extension CURL is required.
 	 * --------------------------------------------------------------------------------------------------- */
