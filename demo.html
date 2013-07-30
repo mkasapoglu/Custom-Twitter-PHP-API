@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Robin's Custom Twitter API: Test</title>
+	
+	<style type="text/css">
+		table a:link {
+			color: #666;
+			font-weight: bold;
+			text-decoration:none;
+		}
+		table a:visited {
+			color: #999999;
+			font-weight:bold;
+			text-decoration:none;
+		}
+		table a:active,
+		table a:hover {
+			color: #bd5a35;
+			text-decoration:underline;
+		}
+		table {
+			font-family:Arial, Helvetica, sans-serif;
+			color:#666;
+			font-size:12px;
+			text-shadow: 1px 1px 0px #fff;
+			width: 900px;
+			margin: 0 auto;
+			background:#eaebec;
+			border:#ccc 1px solid;
+
+			-moz-border-radius:3px;
+			-webkit-border-radius:3px;
+			border-radius:3px;
+
+			-moz-box-shadow: 0 1px 2px #d1d1d1;
+			-webkit-box-shadow: 0 1px 2px #d1d1d1;
+			box-shadow: 0 1px 2px #d1d1d1;
+		}
+		table th {
+			padding:21px 25px 22px 25px;
+			border-top:1px solid #fafafa;
+			border-bottom:1px solid #e0e0e0;
+
+			background: #ededed;
+			background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#ebebeb));
+			background: -moz-linear-gradient(top,  #ededed,  #ebebeb);
+		}
+		table th:first-child {
+			text-align: left;
+			padding-left:20px;
+		}
+		table tr:first-child th:first-child {
+			-moz-border-radius-topleft:3px;
+			-webkit-border-top-left-radius:3px;
+			border-top-left-radius:3px;
+		}
+		table tr:first-child th:last-child {
+			-moz-border-radius-topright:3px;
+			-webkit-border-top-right-radius:3px;
+			border-top-right-radius:3px;
+		}
+		table tr {
+			text-align: center;
+			padding-left:20px;
+		}
+		table td:first-child {
+			text-align: left;
+			padding-left:20px;
+			border-left: 0;
+		}
+		table td {
+			padding:18px;
+			border-top: 1px solid #ffffff;
+			border-bottom:1px solid #e0e0e0;
+			border-left: 1px solid #e0e0e0;
+
+			background: #fafafa;
+			background: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#fafafa));
+			background: -moz-linear-gradient(top,  #fbfbfb,  #fafafa);
+		}
+		table tr.even td {
+			background: #f6f6f6;
+			background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#f6f6f6));
+			background: -moz-linear-gradient(top,  #f8f8f8,  #f6f6f6);
+		}
+		table tr:last-child td {
+			border-bottom:0;
+		}
+		table tr:last-child td:first-child {
+			-moz-border-radius-bottomleft:3px;
+			-webkit-border-bottom-left-radius:3px;
+			border-bottom-left-radius:3px;
+		}
+		table tr:last-child td:last-child {
+			-moz-border-radius-bottomright:3px;
+			-webkit-border-bottom-right-radius:3px;
+			border-bottom-right-radius:3px;
+		}
+		table tr:hover td {
+			background: #f2f2f2;
+			background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#f0f0f0));
+			background: -moz-linear-gradient(top,  #f2f2f2,  #f0f0f0);
+		}
+	</style>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>	
+	<script type="text/javascript">
+	$( document ).ready(function() {
+	
+		// Get 4 latest tweets
+		var username = "thardesign";
+		var tweets = "15";
+		
+		$.get('./twitter_api.php?username=' + username + '&count=' + tweets, function (jsondata) {
+		
+			// Parse JSON
+			var data = $.parseJSON(jsondata);
+			var i = 0;
+			
+			// Append to content
+			$.each(data, function() {
+				i++;
+				$('#tweets').append('<tr><td>' + i + '</td><td>' + this['username'] + '</td><td>' + this['type'] + '</td><td><img src="' + this['avatar'] + '" /></td><td>' + this['date'] + '</td><td>' + this['tweet'] + '</td><tr>');
+			});
+			
+		});
+		
+	});
+	</script>
+	
+	<body>
+		<table cellpadding="0" cellspacing="0">
+			<caption>
+				<br>
+				Support me developing easy alternatives like this, by donating me a beer:<br><br>
+				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+					<input type="hidden" name="cmd" value="_s-xclick">
+					<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----MIIHNwYJKoZIhvcNAQcEoIIHKDCCByQCAQExggEwMIIBLAIBADCBlDCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20CAQAwDQYJKoZIhvcNAQEBBQAEgYCQUiTSkF2ym4KvyHyf5xVXm/swYOn//vRAYzJSUIfBUTB8YhgbNtdh0rE6wmjNboRC2GcOAeRYFkO9cjobL8ptC/26Jclll00ykNTHa94oqEM6RvbIFAAFUbOggMTFtP5CxQg3tFX2mY6+s/1HSaqAdjepH2OBB+54X7ktN3wE5DELMAkGBSsOAwIaBQAwgbQGCSqGSIb3DQEHATAUBggqhkiG9w0DBwQI7p5PNiZ/cTSAgZBPEVwIMswjH6uzs24+yYKqeEdAOdf+nq6sNYq3TxfypVTusG3LISKzNq6hMv9h9wAffIrr22q8DUEe1YM92Lj/ID5/KA7fK4TlPMsdTlRTLGRYGtZ0NRFZyq34bQylTRSjcGYb8bA+zMoZDZ8W8EZSlaBqJjvjy7jcIvIEK6n2+c0DrOmULBuLpmnMWhpWkJOgggOHMIIDgzCCAuygAwIBAgIBADANBgkqhkiG9w0BAQUFADCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20wHhcNMDQwMjEzMTAxMzE1WhcNMzUwMjEzMTAxMzE1WjCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMFHTt38RMxLXJyO2SmS+Ndl72T7oKJ4u4uw+6awntALWh03PewmIJuzbALScsTS4sZoS1fKciBGoh11gIfHzylvkdNe/hJl66/RGqrj5rFb08sAABNTzDTiqqNpJeBsYs/c2aiGozptX2RlnBktH+SUNpAajW724Nv2Wvhif6sFAgMBAAGjge4wgeswHQYDVR0OBBYEFJaffLvGbxe9WT9S1wob7BDWZJRrMIG7BgNVHSMEgbMwgbCAFJaffLvGbxe9WT9S1wob7BDWZJRroYGUpIGRMIGOMQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExFjAUBgNVBAcTDU1vdW50YWluIFZpZXcxFDASBgNVBAoTC1BheVBhbCBJbmMuMRMwEQYDVQQLFApsaXZlX2NlcnRzMREwDwYDVQQDFAhsaXZlX2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNvbYIBADAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUAA4GBAIFfOlaagFrl71+jq6OKidbWFSE+Q4FqROvdgIONth+8kSK//Y/4ihuE4Ymvzn5ceE3S/iBSQQMjyvb+s2TWbQYDwcp129OPIbD9epdr4tJOUNiSojw7BHwYRiPh58S1xGlFgHFXwrEBb3dgNbMUa+u4qectsMAXpVHnD9wIyfmHMYIBmjCCAZYCAQEwgZQwgY4xCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLUGF5UGFsIEluYy4xEzARBgNVBAsUCmxpdmVfY2VydHMxETAPBgNVBAMUCGxpdmVfYXBpMRwwGgYJKoZIhvcNAQkBFg1yZUBwYXlwYWwuY29tAgEAMAkGBSsOAwIaBQCgXTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xMzA3MzAwMDIzMDVaMCMGCSqGSIb3DQEJBDEWBBR7jGm6Hie3KcajGdcQIym9ppbZ1TANBgkqhkiG9w0BAQEFAASBgKyxuBrmn/LQjU2hPtUEJcs88Ulsi4E0+170TOpLjXKKfwenYxslyuW/XD/bVH6dz24sCnrVbGfRWjz2QlFUHge9jVKzJzbAY53TXnXZLWOPt4b3RJKGurCHRJEMbEBoWvGtfsU8nDnKAd5yF4Cm4rTeZd33FFG0KIGz0y+qnpEf-----END PKCS7-----">
+					<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+					<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+				</form>
+				<br>
+			</caption>
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Twitter Name</th>
+					<th>Tweet Type</th>
+					<th>Avatar</th>
+					<th>Date</th>
+					<th>Tweet</th>
+				</tr>
+			</thead>
+			<tbody id="tweets"></tbody>
+		</table>
+	</body>
+</html>
