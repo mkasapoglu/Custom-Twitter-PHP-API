@@ -1,9 +1,8 @@
 Custom-Twitter-PHP-API
 ======================
 
-@author	Robin Bonnes <http://robinbonnes.nl/>
-
-@version	1.0
+- @author	Robin Bonnes <http://robinbonnes.nl/>
+- @version	1.0
 
 Copyright (C) 2013 Robin Bonnes. All rights reserved.
 
@@ -23,11 +22,22 @@ Check the demo here: http://www.robinbonnes.nl/projects/custom-twitter-api/demo.
 HOW TO USE:
 ======================
 
-twitter_api.php?username=yourusername&count=2&retweets=true
+You have two options:
+
+1. Get tweets by username:
+
+twitter_api.php?type=timeline&username=yourusername&count=5&retweets=true
 
  - username	=	Twitter username to retrieve tweets from.
  - count =	Number of tweets to retrieve. Default: 200.
  - retweets	=	Boolean to enable/disable retrieving retweets. Default: false.
+
+2. Get tweets by search keyword:
+
+twitter_api.php?type=search&q=yourkeyword&count=5
+
+ - q =	Search keyword to retrieve tweets from.
+ - count =	Number of tweets to retrieve. Default: 200.
 
 OUTPUT:
 
@@ -38,6 +48,7 @@ CHANGELOG:
 ======================
 
 v1.0	- Release
+v1.1 - Search function added
 
 ======================
 
