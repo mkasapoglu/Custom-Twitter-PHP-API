@@ -2,7 +2,7 @@ Custom-Twitter-PHP-API
 ======================
 
 - @author	Robin Bonnes <http://robinbonnes.nl/>
-- @version	1.0
+- @version	1.1
 
 Copyright (C) 2013 Robin Bonnes. All rights reserved.
 
