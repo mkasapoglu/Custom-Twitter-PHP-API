@@ -110,11 +110,11 @@
 	<script type="text/javascript">
 	$( document ).ready(function() {
 	
-		// Get 4 latest tweets
+		// Get the 5 latest tweets from user: thardesign
 		var username = "thardesign";
-		var tweets = "15";
+		var tweets = "5";
 		
-		$.get('./twitter_api.php?username=' + username + '&count=' + tweets, function (jsondata) {
+		$.get('./twitter_api.php?type=timeline&username=' + username + '&count=' + tweets, function (jsondata) {
 		
 			// Parse JSON
 			var data = $.parseJSON(jsondata);
@@ -123,7 +123,24 @@
 			// Append to content
 			$.each(data, function() {
 				i++;
-				$('#tweets').append('<tr><td>' + i + '</td><td>' + this['username'] + '</td><td>' + this['type'] + '</td><td><img src="' + this['avatar'] + '" /></td><td>' + this['date'] + '</td><td>' + this['tweet'] + '</td><tr>');
+				$('#tweets-timeline').append('<tr><td>' + i + '</td><td>' + this['username'] + '</td><td>' + this['type'] + '</td><td><img src="' + this['avatar'] + '" /></td><td>' + this['date'] + '</td><td>' + this['tweet'] + '</td><tr>');
+			});
+			
+		});
+		
+		// Get the 5 latest tweets with keyword: test
+		var keyword = "test";
+		
+		$.get('./twitter_api.php?type=search&q=' + keyword + '&count=' + tweets, function (jsondata) {
+		
+			// Parse JSON
+			var data = $.parseJSON(jsondata);
+			var i = 0;
+			
+			// Append to content
+			$.each(data, function() {
+				i++;
+				$('#tweets-search').append('<tr><td>' + i + '</td><td>' + this['username'] + '</td><td>' + this['type'] + '</td><td><img src="' + this['avatar'] + '" /></td><td>' + this['date'] + '</td><td>' + this['tweet'] + '</td><tr>');
 			});
 			
 		});
@@ -143,6 +160,7 @@
 					<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 				</form>
 				<br>
+					<h1>Latest 5 tweets from user: thardesign</h1>
 			</caption>
 			<thead>
 				<tr>
@@ -154,7 +172,24 @@
 					<th>Tweet</th>
 				</tr>
 			</thead>
-			<tbody id="tweets"></tbody>
+			<tbody id="tweets-timeline"></tbody>
+		</table>
+		<br>
+		<table cellpadding="0" cellspacing="0">
+			<caption>
+				<h1>Latest 5 tweets with keyword: test</h1>
+			</caption>
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Twitter Name</th>
+					<th>Tweet Type</th>
+					<th>Avatar</th>
+					<th>Date</th>
+					<th>Tweet</th>
+				</tr>
+			</thead>
+			<tbody id="tweets-search"></tbody>
 		</table>
 	</body>
 </html>

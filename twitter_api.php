@@ -36,17 +36,65 @@
 	 * --------------------------------------------------------------------------------------------------- */
 
 	/*
-	 * Twitter Username
+	 * Method
 	 */
-	if(isset($_GET["username"]) && $_GET["username"] != '')
+	if(isset($_GET["type"]) && ($_GET["type"] == 'timeline' || $_GET["type"] == 'search'))
 	{
-		$name = $_GET["username"];
+		$type = $_GET["type"];
 	}
 	else
 	{
-		echo "No twitter username specified!";
+		echo "No api method specified!";
 		die();
 	}
+	
+	if($type == 'timeline')
+	{
+		/*
+		 * Twitter Username
+		 */
+		if(isset($_GET["username"]) && $_GET["username"] != '')
+		{
+			$name = $_GET["username"];
+		}
+		else
+		{
+			echo "No twitter username specified!";
+			die();
+		}
+		
+		/*
+		 * Boolean to retrieve retweets or not.
+		 */
+		if(isset($_GET["retweets"]) && $_GET["retweets"] != '')
+		{
+			if($_GET["retweets"] == "1" || $_GET["retweets"] == "true") {
+				$retweets = true;
+			} else {
+				$retweets = false;
+			}
+		}
+		else
+		{
+			$retweets = false;
+		}
+	}
+	else
+	{
+		/*
+		 * Search Keyword
+		 */
+		if(isset($_GET["q"]) && $_GET["q"] != '')
+		{
+			$keyword = $_GET["q"];
+		}
+		else
+		{
+			echo "No search keyword specified!";
+			die();
+		}
+	}
+	
 	
 	/*
 	 * Number of tweets to retrieve. (max is 200)
@@ -65,25 +113,18 @@
 	}
 	
 	/*
-	 * Boolean to retrieve retweets or not.
-	 */
-	if(isset($_GET["retweets"]) && $_GET["retweets"] != '')
-	{
-		if($_GET["retweets"] == "1" || $_GET["retweets"] == "true") {
-			$retweets = true;
-		} else {
-			$retweets = false;
-		}
-	}
-	else
-	{
-		$retweets = false;
-	}
-	
-	/*
 	 * Get the tweets using CURL.
 	 */
-	$url = 'https://twitter.com/i/profiles/show/' . $name . '/timeline/?count=' . $count;
+	
+	if($type == 'timeline')
+	{
+		$url = 'https://twitter.com/i/profiles/show/' . $name . '/timeline/?count=' . $count;
+	}
+	else 
+	{
+		$url = 'https://twitter.com/i/search/timeline?type=relevance&q=' . $keyword . '&count=' . $count;
+	}
+	
 	$curl = curl_init();
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($curl, CURLOPT_HEADER, false);
