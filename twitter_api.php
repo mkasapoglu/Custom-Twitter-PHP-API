@@ -178,7 +178,7 @@
 		
 		// Extract username
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'fullname')]");
-		$data	.=	'"username":"' . htmlspecialchars($find->item(0)->nodeValue) . '",';
+		$data	.=	'"username":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
 		
 		// Determine Type
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-retweet-text')]");
@@ -190,15 +190,15 @@
 
 		// Extract avatar
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'avatar')]");
-		$data	.=	'"avatar":"' . htmlspecialchars($find->item(0)->getAttribute('src')) . '",';
+		$data	.=	'"avatar":"' . htmlspecialchars($find->item(0)->getAttribute('src'), ENT_QUOTES) . '",';
 		
 		// Extract date
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-short-timestamp')]");
-		$data	.=	'"date":"' . htmlspecialchars($find->item(0)->nodeValue) . '",';
+		$data	.=	'"date":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
 
 		// Extract tweet
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-tweet-text')]");
-		$data	.=	'"tweet":"' . htmlspecialchars($find->item(0)->nodeValue) . '"';
+		$data	.=	'"tweet":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '"';
 		
 		// End Element
 		$data .= "}";
