@@ -6,7 +6,7 @@ Custom-Twitter-PHP-API
 
 Copyright (C) 2013 Robin Bonnes. All rights reserved.
 
-DESCRIPTION:
+Description
 ======================
 
 Due to deprecating Twitter API v1.0, developers need to create oAuth authentication to retrieve tweets.
@@ -14,12 +14,12 @@ This script does exactly the same, without the OAuth hazzle, so its much easier 
 Its only less advanced as Twitter API v1.1. 
 It will retrieve tweets (and retweets) with their avatar, username and post date in JSON format.
 
-LIVE DEMO:
+Live Demo
 ======================
 
 Check the demo here: http://www.robinbonnes.nl/projects/custom-twitter-api/demo.html
 
-HOW TO USE:
+How to use
 ======================
 
 You have two options:
@@ -39,12 +39,12 @@ twitter_api.php?type=search&q=yourkeyword&count=5
  - q =	Search keyword to retrieve tweets from.
  - count =	Number of tweets to retrieve. Default: 200.
 
-OUTPUT:
+Output:
 
 [{"username":"test","type":"tweet","avatar":"http://.../.png","date":"21 January 13","tweet":"Hello"},
 {"username":"test2","type":"retweet","avatar":"http://.../.png","date":"23 January 13","tweet":"Hello"}]
 
-CHANGELOG:
+Changelog
 ======================
 
 v1.0	- Release
