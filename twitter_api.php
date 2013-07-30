@@ -127,14 +127,14 @@
 	}
 	
 	$curl = curl_init();
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($curl, CURLOPT_HEADER, false);
-    //curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_REFERER, $url);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-    $result = curl_exec($curl);
-    curl_close($curl);
+	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+	curl_setopt($curl, CURLOPT_HEADER, false);
+	//curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($curl, CURLOPT_URL, $url);
+	curl_setopt($curl, CURLOPT_REFERER, $url);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+	$result = curl_exec($curl);
+	curl_close($curl);
 	
 	/*
 	 * Decode JSON Encoded string to DOM
@@ -178,7 +178,7 @@
 		
 		// Extract username
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'fullname')]");
-		$data	.=	'"username":"' . $find->item(0)->nodeValue . '",';
+		$data	.=	'"username":"' . htmlspecialchars($find->item(0)->nodeValue) . '",';
 		
 		// Determine Type
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-retweet-text')]");
@@ -190,15 +190,15 @@
 
 		// Extract avatar
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'avatar')]");
-		$data	.=	'"avatar":"' . $find->item(0)->getAttribute('src') . '",';
+		$data	.=	'"avatar":"' . htmlspecialchars($find->item(0)->getAttribute('src')) . '",';
 		
 		// Extract date
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-short-timestamp')]");
-		$data	.=	'"date":"' . $find->item(0)->nodeValue . '",';
+		$data	.=	'"date":"' . htmlspecialchars($find->item(0)->nodeValue) . '",';
 
 		// Extract tweet
 		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-tweet-text')]");
-		$data	.=	'"tweet":"' . $find->item(0)->nodeValue . '"';
+		$data	.=	'"tweet":"' . htmlspecialchars($find->item(0)->nodeValue) . '"';
 		
 		// End Element
 		$data .= "}";
