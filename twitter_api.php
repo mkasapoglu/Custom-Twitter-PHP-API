@@ -17,11 +17,20 @@
 	 * 
 	 * HOW TO USE:
 	 * 
-	 * twitter_api.php?username=yourusername&count=10&retweets=false
-	 *
-	 * username	=	Twitter username to retrieve tweets from.
-	 * count 	=	Number of tweets to retrieve. Default: 200.
-	 * retweets	=	Boolean to enable/disable retrieving retweets. Default: false.
+	 * Get tweets by username:
+	 * 
+	 * twitter_api.php?type=timeline&username=yourusername&count=5&retweets=true
+	 * 
+	 * - username	=	Twitter username to retrieve tweets from.
+	 * - count 		=	Number of tweets to retrieve. Default: 5.
+	 * - retweets	=	Boolean to enable/disable displaying retweets. Default: true.
+	 * 
+	 * Get tweets by search keyword:
+	 * 
+	 * twitter_api.php?type=search&q=yourkeyword&count=5
+	 * 
+	 * - q 		=	Search keyword to retrieve tweets from.
+	 * - count 	=	Number of tweets to retrieve. Default: 5.
 	 *
 	 * OUTPUT:
 	 * 
@@ -32,6 +41,7 @@
 	 *
 	 * v1.0	- Release
 	 * v1.1 - Search function added
+	 * v1.2 - Several bugfixes
 	 *
 	 * Note: PHP extension CURL is required.
 	 * --------------------------------------------------------------------------------------------------- */
@@ -69,15 +79,15 @@
 		 */
 		if(isset($_GET["retweets"]) && $_GET["retweets"] != '')
 		{
-			if($_GET["retweets"] == "1" || $_GET["retweets"] == "true") {
-				$retweets = true;
-			} else {
+			if($_GET["retweets"] == "0" || $_GET["retweets"] == "false") {
 				$retweets = false;
+			} else {
+				$retweets = true;
 			}
 		}
 		else
 		{
-			$retweets = false;
+			$retweets = true;
 		}
 	}
 	else
@@ -149,7 +159,8 @@
 	$decoded	=	urldecode($decoded);
 	$decoded	=	trim($decoded);
 	
-	if($decoded == '' || $decoded == false) {
+	if($decoded == '' || $decoded == false)
+	{
 		if($type == 'timeline')
 		{
 			echo "Username doesn't exist or doesn't have tweets yet.";
@@ -173,50 +184,69 @@
 	$tweets		=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' $classname ')]");
 	$first		=	true;								// Boolean checking if its the first element
 	
-	for($i = 0; $i < $count; $i++) {
-	
-		$tweet = $tweets->item($i);						// Get item
-		
-		// Start Element
-		if(!$first) {
-			$data .= ",";
-		}
-		$first = false;
-		$data .= "{";
+	for($i = 0; $i < $count; $i++)
+	{
+		$skip = false;									// Boolean to check if item has to be skipped
+		$tweet = $tweets->item($i);						// Get tweetdata
 		
 		// Create finder
 		$newdomdoc 	=	new DomDocument;
 		$newdomdoc	->	loadHTML("<html></html>");
 		$newdomdoc	->	documentElement->appendChild($newdomdoc->importNode($tweet,true));
 		$finder		=	new DomXpath($newdomdoc);
-		
-		// Extract username
-		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'fullname')]");
-		$data	.=	'"username":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
-		
-		// Determine Type
-		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-retweet-text')]");
-		if(isset($find->item(0)->nodeValue)) {
-			$data	.=	'"type":"retweet",';
-		} else {
-			$data	.=	'"type":"tweet",';
+			
+		// Check if retweets should be in result
+		if($type == 'timeline' && $retweets == false)
+		{
+			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-retweet-text')]");
+			
+			// If its an retweet, skip it
+			if(isset($find->item(0)->nodeValue))
+			{
+				//$count++;
+				//echo "SKIPPEN";
+				$skip = true;
+			}
 		}
+		
+		if($skip == false)
+		{
+		
+			// Start Element
+			if(!$first) {
+				$data .= ",";
+			}
+			$first = false;
+			$data .= "{";
+						
+			// Extract username
+			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'fullname')]");
+			$data	.=	'"username":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
+			
+			// Determine Type
+			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-retweet-text')]");
+			if(isset($find->item(0)->nodeValue)) {
+				$data	.=	'"type":"retweet",';
+			} else {
+				$data	.=	'"type":"tweet",';
+			}
 
-		// Extract avatar
-		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'avatar')]");
-		$data	.=	'"avatar":"' . htmlspecialchars($find->item(0)->getAttribute('src'), ENT_QUOTES) . '",';
-		
-		// Extract date
-		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-short-timestamp')]");
-		$data	.=	'"date":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
+			// Extract avatar
+			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'avatar')]");
+			$data	.=	'"avatar":"' . htmlspecialchars($find->item(0)->getAttribute('src'), ENT_QUOTES) . '",';
+			
+			// Extract date
+			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-short-timestamp')]");
+			$data	.=	'"date":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
 
-		// Extract tweet
-		$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-tweet-text')]");
-		$data	.=	'"tweet":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '"';
+			// Extract tweet
+			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-tweet-text')]");
+			$data	.=	'"tweet":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '"';
+			
+			// End Element
+			$data .= "}";
 		
-		// End Element
-		$data .= "}";
-		
+		}
 	}
 	
 	$data .= "]";							// End JSON string
