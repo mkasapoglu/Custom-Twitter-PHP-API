@@ -96,7 +96,6 @@
 		}
 	}
 	
-	
 	/*
 	 * Number of tweets to retrieve. (max is 200)
 	 */
@@ -112,24 +111,22 @@
 	{
 		$count = 200;
 	}
-	
+		
 	/*
 	 * Get the tweets using CURL.
 	 */
-	
 	if($type == 'timeline')
 	{
 		$url = 'https://twitter.com/i/profiles/show/' . $name . '/timeline/?count=' . $count;
 	}
 	else 
 	{
-		$url = 'https://twitter.com/i/search/timeline?type=relevance&q=' . $keyword . '&count=' . $count;
+		$url = 'https://twitter.com/i/search/timeline?q=' . $keyword . '&count=' . $count;
 	}
 	
 	$curl = curl_init();
 	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 	curl_setopt($curl, CURLOPT_HEADER, false);
-	//curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($curl, CURLOPT_URL, $url);
 	curl_setopt($curl, CURLOPT_REFERER, $url);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -139,13 +136,28 @@
 	/*
 	 * Decode JSON Encoded string to DOM
 	 */
+	 
+	if($result == '')
+	{
+		echo "Can't fetch data from Twitter server.";
+		die();
+	}
+	
 	$decoded	=	json_decode($result, true);
 	$decoded	=	$decoded['items_html'];
 	$decoded	=	unicode_decode($decoded);
 	$decoded	=	urldecode($decoded);
+	$decoded	=	trim($decoded);
 	
-	if($decoded == '') {
-		echo "Username doesn't exist!";
+	if($decoded == '' || $decoded == false) {
+		if($type == 'timeline')
+		{
+			echo "Username doesn't exist or doesn't have tweets yet.";
+		}
+		else
+		{
+			echo "No results found for keyword: " . $keyword . ".";
+		}
 		die();
 	}
 	
@@ -155,14 +167,16 @@
 	/*
 	 * Export tweets to JSON.
 	 */
-	$data		=	"[";						// String containing the data to respond
-	$classname	=	"content";					// Class containing the data
+	$data		=	"[";								// Start JSON string
+	$classname	=	"content";							// Class containing the data
 	$finder		=	new DomXPath($domdoc);
 	$tweets		=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' $classname ')]");
-	$first		=	true;						// Boolean checking if its the first element
+	$first		=	true;								// Boolean checking if its the first element
 	
-	foreach ($tweets as $tweet) {
+	for($i = 0; $i < $count; $i++) {
 	
+		$tweet = $tweets->item($i);						// Get item
+		
 		// Start Element
 		if(!$first) {
 			$data .= ",";
@@ -204,7 +218,10 @@
 		$data .= "}";
 		
 	}
-	$data .= "]";
+	
+	$data .= "]";							// End JSON string
+	$data = str_replace("\r", "", $data);	// Filter linebreaks
+	$data = str_replace("\n", "", $data);	// Filter linebreaks
 	echo $data;								// Output
 	
 	/*
