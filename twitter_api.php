@@ -4,7 +4,7 @@
 	 * Custom Twitter API
 	 *
 	 * @author	Robin Bonnes <http://robinbonnes.nl/>
-	 * @version	1.1
+	 * @version	1.2
 	 *
 	 * Copyright (C) 2013 Robin Bonnes. All rights reserved.
 	 * 
@@ -114,12 +114,12 @@
 		if(is_numeric($_GET["count"])) {
 			$count = (int) $_GET["count"];
 		} else {
-			$count = 200;
+			$count = 5;
 		}
 	}
 	else
 	{
-		$count = 200;
+		$count = 5;
 	}
 		
 	/*
