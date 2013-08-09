@@ -29,15 +29,15 @@ You have two options:
 twitter_api.php?type=timeline&username=yourusername&count=5&retweets=true
 
  - username	=	Twitter username to retrieve tweets from.
- - count =	Number of tweets to retrieve. Default: 200.
- - retweets	=	Boolean to enable/disable retrieving retweets. Default: false.
+ - count =	Number of tweets to retrieve. Default: 5.
+ - retweets	=	Boolean to enable/disable displaying retweets. Default: true.
 
 2. Get tweets by search keyword:
 
 twitter_api.php?type=search&q=yourkeyword&count=5
 
  - q =	Search keyword to retrieve tweets from.
- - count =	Number of tweets to retrieve. Default: 200.
+ - count =	Number of tweets to retrieve. Default: 5.
 
 Output:
 
@@ -53,6 +53,7 @@ Changelog
 
  - v1.0	- Release
  - v1.1 - Search function added
+ - v1.2 - Several bugfixes
 
 ======================
 
