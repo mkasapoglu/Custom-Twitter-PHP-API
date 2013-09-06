@@ -243,6 +243,19 @@
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-tweet-text')]");
 			$data	.=	'"tweet":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '"';
 			
+			// Extract embed image (Uncomment to use!)
+			/* $embedimage = array();
+			preg_match( '/data-url="([^"]*)"/i', $newdomdoc->saveHTML(), $embedimage ) ;
+			
+			if(count($embedimage))
+			{
+				$data	.=	'"embedimage":"' . $embedimage[1] . '"';
+			}
+			else
+			{
+				$data	.=	'"embedimage":""';
+			} */
+			
 			// End Element
 			$data .= "}";
 		
