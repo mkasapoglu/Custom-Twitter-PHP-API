@@ -58,7 +58,7 @@ Changelog
 Special Thanks
 ======================
 
-- Simon Lucas: Donator
+- Apparent: Donator
 
 ======================
 
