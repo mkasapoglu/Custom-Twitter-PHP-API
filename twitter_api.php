@@ -127,7 +127,7 @@
 	 */
 	if($type == 'timeline')
 	{
-		$url = 'https://twitter.com/i/profiles/show/' . $name . '/timeline/?count=' . $count;
+		$url = 'https://twitter.com/i/profiles/show/' . $name . '/timeline?count=' . $count;
 	}
 	else 
 	{
