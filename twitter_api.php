@@ -4,7 +4,7 @@
 	 * Custom Twitter API
 	 *
 	 * @author	Robin Bonnes <http://robinbonnes.nl/>
-	 * @version	1.2
+	 * @version	1.3
 	 *
 	 * Copyright (C) 2013 Robin Bonnes. All rights reserved.
 	 * 
@@ -42,6 +42,7 @@
 	 * v1.0	- Release
 	 * v1.1 - Search function added
 	 * v1.2 - Several bugfixes
+	 * v1.3 - Added hashtag search support, little bit optimized and several bugs fixed
 	 *
 	 * Note: PHP extension CURL is required.
 	 * --------------------------------------------------------------------------------------------------- */
@@ -55,8 +56,7 @@
 	}
 	else
 	{
-		echo "No api method specified!";
-		die();
+		die("No api method specified!");
 	}
 	
 	if($type == 'timeline')
@@ -64,24 +64,26 @@
 		/*
 		 * Twitter Username
 		 */
-		if(isset($_GET["username"]) && $_GET["username"] != '')
+		if(isset($_GET["username"]) && !empty($_GET["username"]))
 		{
 			$name = $_GET["username"];
 		}
 		else
 		{
-			echo "No twitter username specified!";
-			die();
+			die("No twitter username specified!");
 		}
 		
 		/*
 		 * Boolean to retrieve retweets or not.
 		 */
-		if(isset($_GET["retweets"]) && $_GET["retweets"] != '')
+		if(isset($_GET["retweets"]) && !empty($_GET["retweets"]))
 		{
-			if($_GET["retweets"] == "0" || $_GET["retweets"] == "false") {
+			if($_GET["retweets"] == "0" || $_GET["retweets"] == "false")
+			{
 				$retweets = false;
-			} else {
+			}
+			else
+			{
 				$retweets = true;
 			}
 		}
@@ -95,25 +97,27 @@
 		/*
 		 * Search Keyword
 		 */
-		if(isset($_GET["q"]) && $_GET["q"] != '')
+		if(isset($_GET["q"]) && !empty($_GET["q"]))
 		{
-			$keyword = $_GET["q"];
+			$keyword = urlencode($_GET["q"]);
 		}
 		else
 		{
-			echo "No search keyword specified!";
-			die();
+			die("No search keyword specified!");
 		}
 	}
 	
 	/*
 	 * Number of tweets to retrieve. (max is 200)
 	 */
-	if(isset($_GET["count"]) && $_GET["count"] != '')
+	if(isset($_GET["count"]) && !empty($_GET["count"]))
 	{
-		if(is_numeric($_GET["count"])) {
+		if(is_numeric($_GET["count"]))
+		{
 			$count = (int) $_GET["count"];
-		} else {
+		}
+		else
+		{
 			$count = 5;
 		}
 	}
@@ -147,10 +151,9 @@
 	 * Decode JSON Encoded string to DOM
 	 */
 	 
-	if($result == '')
+	if(empty($result))
 	{
-		echo "Can't fetch data from Twitter server.";
-		die();
+		die("Can't fetch data from Twitter server.");
 	}
 	
 	$decoded	=	json_decode($result, true);
@@ -158,18 +161,17 @@
 	$decoded	=	unicode_decode($decoded);
 	$decoded	=	urldecode($decoded);
 	$decoded	=	trim($decoded);
-	
-	if($decoded == '' || $decoded == false)
+
+	if(empty($decoded) || !$decoded)
 	{
 		if($type == 'timeline')
 		{
-			echo "Username doesn't exist or doesn't have tweets yet.";
+			die("Username doesn't exist or doesn't have tweets yet.");
 		}
 		else
 		{
-			echo "No results found for keyword: " . $keyword . ".";
+			die("No results found for keyword: " . $keyword . ".");
 		}
-		die();
 	}
 	
 	$domdoc		=	new DOMDocument();
@@ -179,9 +181,8 @@
 	 * Export tweets to JSON.
 	 */
 	$data		=	"[";								// Start JSON string
-	$classname	=	"content";							// Class containing the data
-	$finder		=	new DomXPath($domdoc);
-	$tweets		=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' $classname ')]");
+	$finder		=	new DomXPath($domdoc);				// Find tweets in DOMDocument
+	$tweets		=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' content ')]"); // Find query
 	$first		=	true;								// Boolean checking if its the first element
 	
 	for($i = 0; $i < $count; $i++)
@@ -189,12 +190,12 @@
 		$skip = false;									// Boolean to check if item has to be skipped
 		$tweet = $tweets->item($i);						// Get tweetdata
 		
-		// Create finder
+		// Extract tweet
 		$newdomdoc 	=	new DomDocument;
 		$newdomdoc	->	loadHTML("<html></html>");
 		$newdomdoc	->	documentElement->appendChild($newdomdoc->importNode($tweet,true));
 		$finder		=	new DomXpath($newdomdoc);
-			
+
 		// Check if retweets should be in result
 		if($type == 'timeline' && $retweets == false)
 		{
@@ -203,25 +204,24 @@
 			// If its an retweet, skip it
 			if(isset($find->item(0)->nodeValue))
 			{
-				//$count++;
-				//echo "SKIPPEN";
 				$skip = true;
 			}
 		}
 		
-		if($skip == false)
+		if(!$skip)
 		{
 		
 			// Start Element
 			if(!$first) {
 				$data .= ",";
 			}
+
 			$first = false;
 			$data .= "{";
 						
 			// Extract username
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'fullname')]");
-			$data	.=	'"username":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
+			$data	.=	'"username":"' . htmlentities($find->item(0)->nodeValue, ENT_QUOTES) . '",';
 			
 			// Determine Type
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-retweet-text')]");
@@ -233,28 +233,16 @@
 
 			// Extract avatar
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'avatar')]");
-			$data	.=	'"avatar":"' . htmlspecialchars($find->item(0)->getAttribute('src'), ENT_QUOTES) . '",';
+			$data	.=	'"avatar":"' . htmlentities($find->item(0)->getAttribute('src'), ENT_QUOTES) . '",';
 			
 			// Extract date
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-short-timestamp')]");
-			$data	.=	'"date":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
+			$data	.=	'"date":"' . htmlentities($find->item(0)->nodeValue, ENT_QUOTES) . '",';
 
 			// Extract tweet
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-tweet-text')]");
-			$data	.=	'"tweet":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '"';
-			
-			// Extract embed image (Uncomment to use!)
-			/* $embedimage = array();
-			preg_match( '/data-url="([^"]*)"/i', $newdomdoc->saveHTML(), $embedimage ) ;
-			
-			if(count($embedimage))
-			{
-				$data	.=	'"embedimage":"' . $embedimage[1] . '"';
-			}
-			else
-			{
-				$data	.=	'"embedimage":""';
-			} */
+			$fixed_tweet = fix_tweet($newdomdoc->saveXML($find->item(0)));
+			$data	.=	'"tweet":"' . $fixed_tweet . '"';
 			
 			// End Element
 			$data .= "}";
@@ -270,11 +258,55 @@
 	/*
 	 * Helper Functions
 	 */
-	function replace_unicode_escape_sequence($match) {
+	 
+	/* Convert encoding */
+	function replace_unicode_escape_sequence($match)
+	{
 		return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
 	}
 	
-	function unicode_decode($str) {
+	/* Decode Unicode */
+	function unicode_decode($str)
+	{
 		return preg_replace_callback('/\\\\u([0-9a-f]{4})/i', 'replace_unicode_escape_sequence', $str);
+	}
+	
+	/* Brings hastag and URL support */
+	function fix_tweet($temptweet)
+	{
+		$stripped_elements = array();
+		$simplexml = simplexml_load_string('<root>'. str_replace('"',"'", $temptweet) .'</root>', 'SimpleXMLElement', LIBXML_NOERROR | LIBXML_NOXMLDECL);
+
+		if($simplexml)
+		{
+			// Elements in tweet
+			foreach($simplexml->xpath('descendant::*[@*]') as $tag)
+			{
+				// Attributes in elements
+				foreach($tag->attributes() as $name => $value)
+				{
+					if($name != "href")
+					{
+						// Strip attribute
+						$tag->attributes()->$name = '';
+						$stripped_elements[$name] = '/ '. $name .'=""/';
+					}
+					else
+					{
+						// Fix link
+						$first_char = substr($tag->attributes()->$name, 0, 1);
+						if($first_char == "/")
+						{
+							$temp_val = str_replace("#", "%23", $value);
+							$tag->attributes()->$name = "https://twitter.com" . $temp_val;
+						}
+					}
+				}
+			}
+			
+			return str_replace('"',"'", strip_tags(preg_replace($stripped_elements, array(''), $simplexml->asXML()), '<a>'));
+		}
+		
+		return "";
 	}
 ?>
