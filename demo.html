@@ -115,7 +115,7 @@
 		var tweets = "5";
 		
 		$.get('./twitter_api.php?type=timeline&username=' + username + '&count=' + tweets, function (jsondata) {
-		
+
 			// Parse JSON
 			var data = $.parseJSON(jsondata);
 			var i = 0;
@@ -129,11 +129,11 @@
 		});
 		
 		// Get the 5 most recent tweets with keyword: test
-		var keyword = "test";
+		var keyword = "#test";
 		var searchtype = "recent";
 		var tweets = "5";
-		
-		$.get('./twitter_api.php?type=search&searchtype=' + searchtype + '&q=' + keyword + '&count=' + tweets, function (jsondata) {
+
+		$.get('./twitter_api.php?type=search&searchtype=' + searchtype + '&q=' + encodeURIComponent(keyword) + '&count=' + tweets, function (jsondata) {
 		
 			// Parse JSON
 			var data = $.parseJSON(jsondata);
