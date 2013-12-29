@@ -2,7 +2,7 @@ Custom-Twitter-PHP-API
 ======================
 
 - @author	Robin Bonnes <http://robinbonnes.nl/>
-- @version	1.2
+- @version	1.3
 
 Copyright (C) 2013 Robin Bonnes. All rights reserved.
 
@@ -46,7 +46,7 @@ Output:
 
 License
 ======================
-The **twitter_api.php** is free to use everywhere ;-)
+The **twitter_api.php** is licensed under a [Creative Commons Attribution License](http://creativecommons.org/licenses/by/3.0/us/): you may use it, but you must give attribution.
 
 Changelog
 ======================
@@ -54,11 +54,7 @@ Changelog
  - v1.0	- Release
  - v1.1 - Search function added
  - v1.2 - Several bugfixes
-
-Special Thanks
-======================
-
-- Apparent: Donator
+ - v1.3 - Added hashtag search support, little bit optimized and several bugs fixed
 
 ======================
 
