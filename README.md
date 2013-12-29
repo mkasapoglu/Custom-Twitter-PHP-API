@@ -46,7 +46,7 @@ Output:
 
 License
 ======================
-The **twitter_api.php** is licensed under a [Creative Commons Attribution License](http://creativecommons.org/licenses/by/3.0/us/): you may use it, but you must give attribution.
+The **twitter_api.php** is free to use everywhere ;-)
 
 Changelog
 ======================
