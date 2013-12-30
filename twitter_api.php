@@ -4,7 +4,7 @@
 	 * Custom Twitter API
 	 *
 	 * @author	Robin Bonnes <http://robinbonnes.nl/>
-	 * @version	1.3
+	 * @version	1.4
 	 *
 	 * Copyright (C) 2013 Robin Bonnes. All rights reserved.
 	 * 
@@ -43,6 +43,7 @@
 	 * v1.1 - Search function added
 	 * v1.2 - Several bugfixes
 	 * v1.3 - Added hashtag search support, little bit optimized and several bugs fixed
+	 * v1.4 - Special characters fix
 	 *
 	 * Note: PHP extension CURL is required.
 	 * --------------------------------------------------------------------------------------------------- */
@@ -158,8 +159,7 @@
 	
 	$decoded	=	json_decode($result, true);
 	$decoded	=	$decoded['items_html'];
-	$decoded	=	unicode_decode($decoded);
-	$decoded	=	urldecode($decoded);
+	$decoded	=	utf8_decode($decoded);
 	$decoded	=	trim($decoded);
 
 	if(empty($decoded) || !$decoded)
@@ -221,7 +221,7 @@
 						
 			// Extract username
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'fullname')]");
-			$data	.=	'"username":"' . htmlentities($find->item(0)->nodeValue, ENT_QUOTES) . '",';
+			$data	.=	'"username":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
 			
 			// Determine Type
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-retweet-text')]");
@@ -233,11 +233,11 @@
 
 			// Extract avatar
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'avatar')]");
-			$data	.=	'"avatar":"' . htmlentities($find->item(0)->getAttribute('src'), ENT_QUOTES) . '",';
+			$data	.=	'"avatar":"' . htmlspecialchars($find->item(0)->getAttribute('src'), ENT_QUOTES) . '",';
 			
 			// Extract date
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-short-timestamp')]");
-			$data	.=	'"date":"' . htmlentities($find->item(0)->nodeValue, ENT_QUOTES) . '",';
+			$data	.=	'"date":"' . htmlspecialchars($find->item(0)->nodeValue, ENT_QUOTES) . '",';
 
 			// Extract tweet
 			$find	=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), 'js-tweet-text')]");
@@ -253,24 +253,13 @@
 	$data .= "]";							// End JSON string
 	$data = str_replace("\r", "", $data);	// Filter linebreaks
 	$data = str_replace("\n", "", $data);	// Filter linebreaks
+	header('Content-Type: text/html;charset=utf-8');
 	echo $data;								// Output
 	
 	/*
 	 * Helper Functions
 	 */
 	 
-	/* Convert encoding */
-	function replace_unicode_escape_sequence($match)
-	{
-		return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
-	}
-	
-	/* Decode Unicode */
-	function unicode_decode($str)
-	{
-		return preg_replace_callback('/\\\\u([0-9a-f]{4})/i', 'replace_unicode_escape_sequence', $str);
-	}
-	
 	/* Brings hastag and URL support */
 	function fix_tweet($temptweet)
 	{
