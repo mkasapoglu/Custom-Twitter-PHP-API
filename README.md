@@ -2,7 +2,7 @@ Custom-Twitter-PHP-API
 ======================
 
 - @author	Robin Bonnes <http://robinbonnes.nl/>
-- @version	1.4
+- @version	1.5
 
 Copyright (C) 2013 Robin Bonnes. All rights reserved.
 
@@ -56,6 +56,7 @@ Changelog
  - v1.2 - Several bugfixes
  - v1.3 - Added hashtag search support, little bit optimized and several bugs fixed
  - v1.4 - Special characters fix
+ - v1.5 - New layout compatible
 
 ======================
 
