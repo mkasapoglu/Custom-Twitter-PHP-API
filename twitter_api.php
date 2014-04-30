@@ -4,7 +4,7 @@
 	 * Custom Twitter API
 	 *
 	 * @author	Robin Bonnes <http://robinbonnes.nl/>
-	 * @version	1.4
+	 * @version	1.5
 	 *
 	 * Copyright (C) 2013 Robin Bonnes. All rights reserved.
 	 * 
@@ -44,10 +44,16 @@
 	 * v1.2 - Several bugfixes
 	 * v1.3 - Added hashtag search support, little bit optimized and several bugs fixed
 	 * v1.4 - Special characters fix
+	 * v1.5 - New layout compatible
 	 *
 	 * Note: PHP extension CURL is required.
 	 * --------------------------------------------------------------------------------------------------- */
 
+	/*
+	 * Allow Cross Domain
+	 */
+	header('Access-Control-Allow-Origin: *');
+	 
 	/*
 	 * Method
 	 */
@@ -183,6 +189,10 @@
 	$data		=	"[";								// Start JSON string
 	$finder		=	new DomXPath($domdoc);				// Find tweets in DOMDocument
 	$tweets		=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' content ')]"); // Find query
+	if($tweets->item(0) == null)
+	{
+		$tweets		=	$finder->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' Grid ')]"); // Find query
+	}
 	$first		=	true;								// Boolean checking if its the first element
 	
 	for($i = 0; $i < $count; $i++)
@@ -210,7 +220,6 @@
 		
 		if(!$skip)
 		{
-		
 			// Start Element
 			if(!$first) {
 				$data .= ",";
@@ -253,7 +262,7 @@
 	$data .= "]";							// End JSON string
 	$data = str_replace("\r", "", $data);	// Filter linebreaks
 	$data = str_replace("\n", "", $data);	// Filter linebreaks
-	header('Content-Type: text/html;charset=utf-8');
+	//header('Content-Type: text/html;charset=utf-8');
 	echo $data;								// Output
 	
 	/*
